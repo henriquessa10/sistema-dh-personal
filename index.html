@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DIONISIO HENRIQUE | PERSONAL TRAINER</title>
+  <style>
+    :root {
+      --verde-oliva: #6B7B4C;
+      --cinza-antracite: #333634;
+      --cinza-claro: #f2f3f0;
+      --cinza-medio: #707578;
+      --branco: #ffffff;
+      --erro: #d9534f;
+      --sucesso: #4caf50;
+      --sombra-suave: 0 14px 30px rgba(0, 0, 0, 0.20);
+      --raio-base: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #7f9160, #333634 55%, #1d1f20 100%);
+      color: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1080px;
+      background: rgba(15, 16, 17, 0.92);
+      border-radius: 28px;
+      box-shadow: var(--sombra-suave);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 26px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .brand-title {
+      font-size: 1.2rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .badge-online {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(107, 123, 76, 0.18);
+      border: 1px solid rgba(107, 123, 76, 0.6);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #dfe6ce;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9be15d;
+      box-shadow: 0 0 7px rgba(155, 225, 93, 0.8);
+    }
+
+    .app-main {
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.7fr);
+      gap: 0;
+    }
+
+    @media (max-width: 880px) {
+      .app-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .left-pane {
+      padding: 18px 24px 22px;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    @media (max-width: 880px) {
+      .left-pane {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    .right-pane {
+      padding: 18px 24px 22px;
+      background: radial-gradient(circle at top, rgba(107, 123, 76, 0.24), transparent 55%);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab-button {
+      position: relative;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-button span.icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+    }
+
+    .tab-button.active {
+      background: var(--verde-oliva);
+      color: #f7f9f3;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .tab-button:not(.active):hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.22s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Form layout */
+    .section-header {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f6f7f4;
+      margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.62);
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .grid-two,
+      .grid-three {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.72);
+      margin-bottom: 4px;
+    }
+
+    label span.helper {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.48);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(18, 19, 20, 0.9);
+      color: var(--branco);
+      padding: 8px 10px;
+      font-size: 0.84rem;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.36);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+      max-height: 200px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--verde-oliva);
+      box-shadow: 0 0 0 1px rgba(107, 123, 76, 0.7);
+      background: rgba(18, 19, 20, 1);
+    }
+
+    .radio-group,
+    .inline-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .pill-option {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 0.78rem;
+      cursor: pointer;
+      user-select: none;
+      color: rgba(255, 255, 255, 0.8);
+      transition: all 0.16s ease-out;
+    }
+
+    .pill-option input {
+      display: none;
+    }
+
+    .pill-option::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      box-sizing: border-box;
+    }
+
+    .pill-option input:checked + span::before,
+    .pill-option.active::before {
+      border-color: var(--verde-oliva);
+      box-shadow: 0 0 0 3px rgba(107, 123, 76, 0.5);
+      background: var(--verde-oliva);
+    }
+
+    .pill-option:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .pill-option input:checked ~ span,
+    .pill-option.active {
+      border-color: var(--verde-oliva);
+      background: rgba(107, 123, 76, 0.28);
+      color: #f4f7ec;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    button.primary,
+    button.secondary,
+    button.ghost {
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 0.84rem;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.16s ease-out;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--verde-oliva), #84965a);
+      color: #f7f9f3;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+    }
+
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    button.secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    button.secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    button.ghost {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .status-line {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .status-line span {
+      font-weight: 500;
+    }
+
+    .status-line.--success span {
+      color: var(--sucesso);
+    }
+
+    .status-line.--error span {
+      color: var(--erro);
+    }
+
+    /* Right pane: resumo + cronômetro */
+    .profile-card {
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), rgba(16, 17, 18, 0.96));
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 16px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .profile-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 20% 0, #dfe6ce, #6b7b4c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #1d1f20;
+    }
+
+    .profile-info-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .profile-info-sub {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .profile-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      font-size: 0.76rem;
+      margin-bottom: 6px;
+    }
+
+    .summary-item {
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.32);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .summary-label {
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.64rem;
+      color: rgba(255, 255, 255, 0.48);
+      margin-bottom: 2px;
+    }
+
+    .summary-value {
+      font-weight: 500;
+    }
+
+    .summary-note {
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Cronômetro */
+    .timer-card {
+      background: linear-gradient(135deg, var(--cinza-antracite), #222425);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .timer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .timer-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .timer-mode {
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timer-mode select {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--branco);
+      padding: 3px 9px;
+      font-size: 0.74rem;
+      outline: none;
+    }
+
+    .timer-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 0 6px;
+    }
+
+    .timer-digits {
+      font-size: 2.2rem;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.12em;
+    }
+
+    .timer-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .timer-btn {
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.78rem;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.16s ease-out;
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .timer-btn.--primary {
+      background: var(--verde-oliva);
+      color: #f7f9f3;
+    }
+
+    .timer-btn.--danger {
+      background: #b94742;
+    }
+
+    .timer-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .timer-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .timer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 4px;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .timer-laps {
+      margin-top: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .lap-item {
+      font-size: 0.76rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 3px 4px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .lap-item span.index {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .lap-item span.time {
+      font-variant-numeric: tabular-nums;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-title">DIONISIO HENRIQUE | PERSONAL TRAINER</span>
+        <span class="brand-subtitle">Gestão completa de alunos • avaliação • treino</span>
+      </div>
+      <div class="badge-online">
+        <span class="badge-dot"></span>
+        <span>Sessão ativa</span>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- Lado Esquerdo: Abas e formulários -->
+      <section class="left-pane">
+        <nav class="tabs" aria-label="Navegação principal">
+          <button class="tab-button active" data-tab="cadastro" type="button">
+            <span class="icon">C</span>
+            <span>Cadastro</span>
+          </button>
+          <button class="tab-button" data-tab="anamnese" type="button">
+            <span class="icon">A</span>
+            <span>Anamnese</span>
+          </button>
+          <button class="tab-button" data-tab="treino" type="button">
+            <span class="icon">T</span>
+            <span>Treino</span>
+          </button>
+        </nav>
+
+        <!-- Cadastro -->
+        <section id="tab-cadastro" class="tab-content active" aria-label="Cadastro de aluno">
+          <div class="section-header">
+            <h2 class="section-title">Cadastro do aluno</h2>
+            <p class="section-subtitle">
+              Dados básicos para identificação, contato e métricas iniciais.
+            </p>
+          </div>
+
+          <form id="form-cadastro">
+            <div class="form-group">
+              <label for="nome">
+                Nome completo
+                <span class="helper">Obrigatório</span>
+              </label>
+              <input type="text" id="nome" name="nome" placeholder="Ex: João da Silva" required />
+            </div>
+
+            <div class="grid-two">
+              <div class="form-group">
+                <label for="data-nascimento">
+                  Data de nascimento
+                  <span class="helper">dd/mm/aaaa</span>
+                </label>
+                <input type="date" id="data-nascimento" name="dataNascimento" />
+              </div>
+              <div class="form-group">
+                <label for="sexo">
+                  Sexo
+                  <span class="helper">para cálculo de referência</span>
+                </label>
+                <select id="sexo" name="sexo">
+                  <option value="">Selecionar</option>
+                  <option value="feminino">Feminino</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-two">
+              <div class="form-group">
+                <label for="telefone">
+                  Telefone / WhatsApp
+                  <span class="helper">contato rápido</span>
+                </label>
+                <input type="text" id="telefone" name="telefone" placeholder="(00) 00000-0000" />
+              </div>
+              <div class="form-group">
+                <label for="email">
+                  E-mail
+                  <span class="helper">opcional</span>
+                </label>
+                <input type="text" id="email" name="email" placeholder="aluno@exemplo.com" />
+              </div>
+            </div>
+
+            <div class="grid-three">
+              <div class="form-group">
+                <label for="peso">
+                  Peso (kg)
+                  <span class="helper">atual</span>
+                </label>
+                <input type="number" id="peso" name="peso" step="0.1" min="0" placeholder="Ex: 78,5" />
+              </div>
+              <div class="form-group">
+                <label for="altura">
+                  Altura (cm)
+                  <span class="helper">Ex: 172</span>
+                </label>
+                <input type="number" id="altura" name="altura" step="1" min="0" placeholder="Ex: 172" />
+              </div>
+              <div class="form-group">
+                <label for="objetivo-principal">
+                  Objetivo principal
+                  <span class="helper">meta do aluno</span>
+                </label>
+                <select id="objetivo-principal" name="objetivoPrincipal">
+                  <option value="">Selecionar</option>
+                  <option value="emagrecimento">Emagrecimento</option>
+                  <option value="hipertrofia">Hipertrofia</option>
+                  <option value="condicionamento">Condicionamento</option>
+                  <option value="reabilitacao">Reabilitação</option>
+                  <option value="performance">Performance esportiva</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observacoes-cadastro">
+                Observações gerais
+                <span class="helper">perfil, rotina, restrições leves</span>
+              </label>
+              <textarea
+                id="observacoes-cadastro"
+                name="observacoesCadastro"
+                placeholder="Ex: Trabalha sentado, treina 3x/semana, histórico de dor lombar leve..."
+              ></textarea>
+            </div>
+
+            <div class="actions-row">
+              <button type="button" class="ghost" id="limpar-cadastro">Limpar</button>
+              <button type="submit" class="primary">Salvar cadastro</button>
+            </div>
+            <p class="status-line" id="status-cadastro">
+              <span>Preencha o cadastro do aluno.</span>
+            </p>
+          </form>
+        </section>
+
+        <!-- Anamnese -->
+        <section id="tab-anamnese" class="tab-content" aria-label="Anamnese e histórico de saúde">
+          <div class="section-header">
+            <h2 class="section-title">Anamnese</h2>
+            <p class="section-subtitle">
+              Histórico de saúde, restrições e fatores de risco para orientar o planejamento.
+            </p>
+          </div>
+
+          <form id="form-anamnese">
+            <div class="grid-two">
+              <div class="form-group">
+                <label>
+                  Possui liberação médica?
+                  <span class="helper">atestado recente</span>
+                </label>
+                <div class="radio-group">
+                  <label class="pill-option">
+                    <input type="radio" name="liberacaoMedica" value="sim" />
+                    <span>Sim</span>
+                  </label>
+                  <label class="pill-option">
+                    <input type="radio" name="liberacaoMedica" value="nao" />
+                    <span>Não</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>
+                  Usa medicação contínua?
+                </label>
+                <div class="radio-group">
+                  <label class="pill-option">
+                    <input type="radio" name="medicacaoContinua" value="sim" />
+                    <span>Sim</span>
+                  </label>
+                  <label class="pill-option">
+                    <input type="radio" name="medicacaoContinua" value="nao" />
+                    <span>Não</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-two">
+              <div class="form-group">
+                <label for="historico-doencas">
+                  Histórico de doenças
+                  <span class="helper">cardíacas, respiratórias, metabólicas...</span>
+                </label>
+                <textarea
+                  id="historico-doencas"
+                  name="historicoDoencas"
+                  placeholder="Ex: Hipertensão controlada, histórico de asma na infância..."
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label for="historico-lesoes">
+                  Histórico de lesões
+                  <span class="helper">ortopédicas, cirurgias, etc.</span>
+                </label>
+                <textarea
+                  id="historico-lesoes"
+                  name="historicoLesoes"
+                  placeholder="Ex: Lesão de joelho direito em 2019, cirurgias..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Fatores de risco
+                <span class="helper">selecione os que se aplicam</span>
+              </label>
+              <div class="inline-options">
+                <label class="pill-option">
+                  <input type="checkbox" name="fatoresRisco" value="sedentarismo" />
+                  <span>Sedentarismo</span>
+                </label>
+                <label class="pill-option">
+                  <input type="checkbox" name="fatoresRisco" value="tabagismo" />
+                  <span>Tabagismo</span>
+                </label>
+                <label class="pill-option">
+                  <input type="checkbox" name="fatoresRisco" value="alcool" />
+                  <span>Álcool frequente</span>
+                </label>
+                <label class="pill-option">
+                  <input type="checkbox" name="fatoresRisco" value="hipertensao" />
+                  <span>Hipertensão</span>
+                </label>
+                <label class="pill-option">
+                  <input type="checkbox" name="fatoresRisco" value="diabetes" />
+                  <span>Diabetes</span>
+                </label>
+                <label class="pill-option">
+                  <input type="checkbox" name="fatoresRisco" value="colesterol" />
+                  <span>Colesterol elevado</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="restricoes">
+                Restrições / cuidados específicos
+                <span class="helper">o que deve ser evitado</span>
+              </label>
+              <textarea
+                id="restricoes"
+                name="restricoes"
+                placeholder="Ex: Evitar impacto alto, limitar carga em exercícios acima da cabeça..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="nivel-atividade">
+                Nível de atividade atual
+              </label>
+              <select id="nivel-atividade" name="nivelAtividade">
+                <option value="">Selecionar</option>
+                <option value="sedentario">Sedentário</option>
+                <option value="pouco-ativo">Pouco ativo</option>
+                <option value="ativo">Ativo</option>
+                <option value="muito-ativo">Muito ativo</option>
+              </select>
+            </div>
+
+            <div class="actions-row">
+              <button type="button" class="ghost" id="limpar-anamnese">Limpar</button>
+              <button type="submit" class="secondary">Salvar anamnese</button>
+            </div>
+            <p class="status-line" id="status-anamnese">
+              <span>Registre o histórico de saúde do aluno.</span>
+            </p>
+          </form>
+        </section>
+
+        <!-- Treino -->
+        <section id="tab-treino" class="tab-content" aria-label="Planejamento de treino e cronômetro">
+          <div class="section-header">
+            <h2 class="section-title">Treino</h2>
+            <p class="section-subtitle">
+              Monte rapidamente a sessão do dia e acompanhe a execução com o cronômetro.
+            </p>
+          </div>
+
+          <form id="form-treino">
+            <div class="grid-three">
+              <div class="form-group">
+                <label for="foco-treino">
+                  Foco do treino
+                </label>
+                <select id="foco-treino" name="focoTreino">
+                  <option value="">Selecionar</option>
+                  <option value="fullbody">Full Body</option>
+                  <option value="superior">Membros superiores</option>
+                  <option value="inferior">Membros inferiores</option>
+                  <option value="hiit">HIIT / condicionamento</option>
+                  <option value="core">Core / estabilidade</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="duracao-estimada">
+                  Duração estimada (min)
+                </label>
+                <input type="number" id="duracao-estimada" name="duracaoEstimada" min="0" step="5" placeholder="Ex: 45" />
+              </div>
+              <div class="form-group">
+                <label for="treino-data">
+                  Data da sessão
+                </label>
+                <input type="date" id="treino-data" name="treinoData" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bloco-a">
+                Bloco A
+                <span class="helper">exercícios principais</span>
+              </label>
+              <textarea
+                id="bloco-a"
+                name="blocoA"
+                placeholder="Ex: Agachamento livre 4x8 • Supino reto 4x8 • Remada curvada 4x10..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="bloco-b">
+                Bloco B
+                <span class="helper">acessórios</span>
+              </label>
+              <textarea
+                id="bloco-b"
+                name="blocoB"
+                placeholder="Ex: Leg press, desenvolvimento, elevação lateral, core..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="aquecimento">
+                Aquecimento / mobilidade
+              </label>
+              <textarea
+                id="aquecimento"
+                name="aquecimento"
+                placeholder="Ex: 5–10 min de cardio leve, mobilidade de quadril e ombros..."
+              ></textarea>
+            </div>
+
+            <div class="actions-row">
+              <button type="button" class="ghost" id="limpar-treino">Limpar</button>
+              <button type="submit" class="secondary">Salvar treino</button>
+            </div>
+            <p class="status-line" id="status-treino">
+              <span>Estruture o treino da sessão.</span>
+            </p>
+          </form>
+        </section>
+      </section>
+
+      <!-- Lado Direito: Resumo + cronômetro -->
+      <aside class="right-pane">
+        <section class="profile-card" aria-label="Resumo do aluno">
+          <div class="profile-header">
+            <div class="profile-main">
+              <div class="avatar" id="avatar-iniciais">DH</div>
+              <div>
+                <div class="profile-info-title" id="resumo-nome">Aluno não definido</div>
+                <div class="profile-info-sub" id="resumo-objetivo">Defina objetivo e cadastro para começar.</div>
+              </div>
+            </div>
+            <div>
+              <span class="summary-label">Status</span>
+              <div class="summary-value" id="resumo-status">Em configuração</div>
+            </div>
+          </div>
+
+          <div class="profile-summary-grid">
+            <div class="summary-item">
+              <div class="summary-label">Idade</div>
+              <div class="summary-value" id="resumo-idade">–</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Peso</div>
+              <div class="summary-value" id="resumo-peso">–</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Altura</div>
+              <div class="summary-value" id="resumo-altura">–</div>
+            </div>
+          </div>
+
+          <p class="summary-note" id="resumo-nota">
+            Assim que salvar cadastro, anamnese e treino, o resumo rápido do aluno aparecerá aqui.
+          </p>
+        </section>
+
+        <section class="timer-card" aria-label="Cronômetro de treino">
+          <div class="timer-header">
+            <div>
+              <div class="timer-title">Cronômetro de treino</div>
+            </div>
+            <div class="timer-mode">
+              Modo:
+              <select id="timer-mode">
+                <option value="cronometro">Cronômetro</option>
+                <option value="contagem-regressiva">Contagem regressiva</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="timer-display">
+            <div class="timer-digits" id="timer-display">00:00</div>
+            <div class="timer-label" id="timer-label">Parado</div>
+          </div>
+
+          <div class="grid-three" style="margin-top: 4px; margin-bottom: 4px;">
+            <div class="form-group">
+              <label for="minutos-alvo">
+                Minutos alvo
+              </label>
+              <input type="number" id="minutos-alvo" min="0" step="1" placeholder="Ex: 1" />
+            </div>
+            <div class="form-group">
+              <label for="segundos-alvo">
+                Segundos alvo
+              </label>
+              <input type="number" id="segundos-alvo" min="0" max="59" step="5" placeholder="Ex: 30" />
+            </div>
+            <div class="form-group">
+              <label for="intervalo-descanso">
+                Descanso (s)
+              </label>
+              <input type="number" id="intervalo-descanso" min="0" step="5" placeholder="Ex: 60" />
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button type="button" class="timer-btn --primary" id="btn-start">
+              Iniciar
+            </button>
+            <button type="button" class="timer-btn" id="btn-pause" disabled>
+              Pausar
+            </button>
+            <button type="button" class="timer-btn --danger" id="btn-reset" disabled>
+              Zerar
+            </button>
+            <button type="button" class="timer-btn" id="btn-lap" disabled>
+              Volta
+            </button>
+          </div>
+
+          <div class="timer-footer">
+            <span id="timer-status-text">Pronto para iniciar.</span>
+            <span id="timer-sessoes">Sessões: 0</span>
+          </div>
+
+          <div class="timer-laps" id="timer-laps" aria-label="Voltas do cronômetro"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    // Utilidades simples
+    function formatTime(totalSeconds) {
+      const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+      return minutes + ":" + seconds;
+    }
+
+    // Tabs
+    (function () {
+      const buttons = document.querySelectorAll(".tab-button");
+      const contents = document.querySelectorAll(".tab-content");
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-tab");
+
+          buttons.forEach((b) => b.classList.remove("active"));
+          contents.forEach((c) => c.classList.remove("active"));
+
+          btn.classList.add("active");
+          const section = document.getElementById("tab-" + target);
+          if (section) section.classList.add("active");
+        });
+      });
+    })();
+
+    // Cadastro: atualização de resumo básico
+    (function () {
+      const form = document.getElementById("form-cadastro");
+      const limpar = document.getElementById("limpar-cadastro");
+      const status = document.getElementById("status-cadastro");
+
+      function atualizarResumoCadastro() {
+        const nome = document.getElementById("nome").value.trim();
+        const dataNascimento = document.getElementById("data-nascimento").value;
+        const peso = document.getElementById("peso").value;
+        const altura = document.getElementById("altura").value;
+        const objetivo = document.getElementById("objetivo-principal").value;
+
+        const resumoNome = document.getElementById("resumo-nome");
+        const resumoObjetivo = document.getElementById("resumo-objetivo");
+        const resumoIdade = document.getElementById("resumo-idade");
+        const resumoPeso = document.getElementById("resumo-peso");
+        const resumoAltura = document.getElementById("resumo-altura");
+        const avatarIniciais = document.getElementById("avatar-iniciais");
+
+        if (nome) {
+          resumoNome.textContent = nome;
+          const iniciais = nome
+            .split(" ")
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((n) => n[0].toUpperCase())
+            .join("");
+          avatarIniciais.textContent = iniciais || "A";
+        } else {
+          resumoNome.textContent = "Aluno não definido";
+          avatarIniciais.textContent = "DH";
+        }
+
+        if (objetivo) {
+          const label = document.querySelector("#objetivo-principal option:checked")?.textContent || "";
+          resumoObjetivo.textContent = "Objetivo: " + label;
+        } else {
+          resumoObjetivo.textContent = "Defina objetivo e cadastro para começar.";
+        }
+
+        if (dataNascimento) {
+          const hoje = new Date();
+          const nasc = new Date(dataNascimento + "T00:00:00");
+          let idade = hoje.getFullYear() - nasc.getFullYear();
+          const m = hoje.getMonth() - nasc.getMonth();
+          if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+            idade--;
+          }
+          resumoIdade.textContent = idade > 0 ? idade + " anos" : "–";
+        } else {
+          resumoIdade.textContent = "–";
+        }
+
+        resumoPeso.textContent = peso ? peso.replace(".", ",") + " kg" : "–";
+        resumoAltura.textContent = altura ? altura + " cm" : "–";
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        atualizarResumoCadastro();
+        status.classList.remove("--error");
+        status.classList.add("--success");
+        status.querySelector("span").textContent = "Cadastro salvo localmente (não persiste ao fechar a página).";
+
+        const resumoStatus = document.getElementById("resumo-status");
+        const resumoNota = document.getElementById("resumo-nota");
+        resumoStatus.textContent = "Cadastro em dia";
+        resumoNota.textContent = "Cadastro atualizado. Complete anamnese e treino para uma visão completa do aluno.";
+      });
+
+      limpar.addEventListener("click", function () {
+        form.reset();
+        atualizarResumoCadastro();
+        status.classList.remove("--success", "--error");
+        status.querySelector("span").textContent = "Cadastro limpo. Preencha novamente.";
+      });
+
+      form.addEventListener("input", atualizarResumoCadastro);
+    })();
+
+    // Anamnese: atualização de resumo de risco
+    (function () {
+      const form = document.getElementById("form-anamnese");
+      const limpar = document.getElementById("limpar-anamnese");
+      const status = document.getElementById("status-anamnese");
+
+      function atualizarResumoAnamnese() {
+        const fatores = Array.from(
+          document.querySelectorAll('input[name="fatoresRisco"]:checked')
+        ).map((el) => el.nextElementSibling?.textContent || "");
+
+        const resumoStatus = document.getElementById("resumo-status");
+        const resumoNota = document.getElementById("resumo-nota");
+
+        if (fatores.length === 0) {
+          resumoStatus.textContent = "Risco baixo/moderado";
+          resumoNota.textContent =
+            "Sem fatores de risco marcados. Ainda assim, respeite progressão e feedback do aluno.";
+          return;
+        }
+
+        if (fatores.length <= 2) {
+          resumoStatus.textContent = "Atenção a riscos";
+        } else {
+          resumoStatus.textContent = "Risco elevado";
+        }
+
+        resumoNota.textContent =
+          "Fatores de risco selecionados: " +
+          fatores.join(", ") +
+          ". Considere ajustes de intensidade, volume e monitorização.";
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        status.classList.remove("--error");
+        status.classList.add("--success");
+        status.querySelector("span").textContent =
+          "Anamnese salva localmente (não persiste ao fechar a página).";
+        atualizarResumoAnamnese();
+      });
+
+      limpar.addEventListener("click", function () {
+        form.reset();
+        status.classList.remove("--success", "--error");
+        status.querySelector("span").textContent = "Anamnese limpa. Preencha novamente.";
+
+        const resumoStatus = document.getElementById("resumo-status");
+        const resumoNota = document.getElementById("resumo-nota");
+        resumoStatus.textContent = "Em configuração";
+        resumoNota.textContent =
+          "Assim que salvar cadastro, anamnese e treino, o resumo rápido do aluno aparecerá aqui.";
+      });
+
+      form.addEventListener("input", atualizarResumoAnamnese);
+    })();
+
+    // Treino: resumo de sessão
+    (function () {
+      const form = document.getElementById("form-treino");
+      const limpar = document.getElementById("limpar-treino");
+      const status = document.getElementById("status-treino");
+
+      function atualizarResumoTreino() {
+        const foco = document.getElementById("foco-treino").value;
+        const duracao = document.getElementById("duracao-estimada").value;
+
+        const resumoStatus = document.getElementById("resumo-status");
+        const resumoNota = document.getElementById("resumo-nota");
+
+        if (!foco && !duracao) return;
+
+        const focoLabel = document.querySelector("#foco-treino option:checked")?.textContent || "";
+        const partes = [];
+        if (focoLabel) partes.push("Foco: " + focoLabel);
+        if (duracao) partes.push("Duração alvo: " + duracao + " min");
+
+        resumoStatus.textContent = "Treino configurado";
+        resumoNota.textContent = partes.join(" • ");
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        status.classList.remove("--error");
+        status.classList.add("--success");
+        status.querySelector("span").textContent =
+          "Treino salvo localmente (não persiste ao fechar a página).";
+        atualizarResumoTreino();
+      });
+
+      limpar.addEventListener("click", function () {
+        form.reset();
+        status.classList.remove("--success", "--error");
+        status.querySelector("span").textContent = "Treino limpo. Estruture novamente.";
+      });
+
+      form.addEventListener("input", atualizarResumoTreino);
+    })();
+
+    // Cronômetro de treino
+    (function () {
+      const display = document.getElementById("timer-display");
+      const label = document.getElementById("timer-label");
+      const modoSelect = document.getElementById("timer-mode");
+      const minutosAlvo = document.getElementById("minutos-alvo");
+      const segundosAlvo = document.getElementById("segundos-alvo");
+      const intervaloDescanso = document.getElementById("intervalo-descanso");
+      const btnStart = document.getElementById("btn-start");
+      const btnPause = document.getElementById("btn-pause");
+      const btnReset = document.getElementById("btn-reset");
+      const btnLap = document.getElementById("btn-lap");
+      const statusText = document.getElementById("timer-status-text");
+      const sessoesSpan = document.getElementById("timer-sessoes");
+      const lapsContainer = document.getElementById("timer-laps");
+
+      let timerId = null;
+      let totalSeconds = 0;
+      let targetSeconds = 0;
+      let running = false;
+      let sessoes = 0;
+      let lastLapSeconds = 0;
+
+      function atualizarDisplay() {
+        display.textContent = formatTime(totalSeconds);
+      }
+
+      function configurarModo() {
+        const modo = modoSelect.value;
+        if (modo === "cronometro") {
+          label.textContent = running ? "Cronômetro em andamento" : "Cronômetro parado";
+          statusText.textContent = "Cronômetro simples. Use para séries, blocos ou sessão inteira.";
+        } else {
+          label.textContent = running ? "Contagem regressiva em andamento" : "Contagem regressiva pronta";
+          statusText.textContent =
+            "Defina tempo alvo para intervalos, EMOM, TABATA ou blocos específicos.";
+        }
+      }
+
+      function aplicarTarget() {
+        const modo = modoSelect.value;
+        const m = Number(minutosAlvo.value) || 0;
+        const s = Number(segundosAlvo.value) || 0;
+        targetSeconds = m * 60 + s;
+
+        if (modo === "contagem-regressiva" && targetSeconds > 0) {
+          totalSeconds = targetSeconds;
+          atualizarDisplay();
+        }
+      }
+
+      modoSelect.addEventListener("change", function () {
+        aplicarTarget();
+        configurarModo();
+      });
+
+      minutosAlvo.addEventListener("input", aplicarTarget);
+      segundosAlvo.addEventListener("input", aplicarTarget);
+
+      function tick() {
+        const modo = modoSelect.value;
+
+        if (modo === "cronometro") {
+          totalSeconds++;
+        } else {
+          if (totalSeconds > 0) {
+            totalSeconds--;
+          }
+        }
+
+        atualizarDisplay();
+
+        if (modo === "contagem-regressiva" && totalSeconds === 0 && targetSeconds > 0) {
+          clearInterval(timerId);
+          timerId = null;
+          running = false;
+          label.textContent = "Tempo encerrado";
+          statusText.textContent = "Bloco finalizado. Considere ativar descanso ou começar nova sessão.";
+          btnStart.disabled = false;
+          btnPause.disabled = true;
+          btnReset.disabled = false;
+          btnLap.disabled = false;
+          sessoes++;
+          sessoesSpan.textContent = "Sessões: " + sessoes;
+
+          const descanso = Number(intervaloDescanso.value) || 0;
+          if (descanso > 0) {
+            setTimeout(function () {
+              statusText.textContent = "Intervalo de descanso sugerido: " + descanso + "s.";
+            }, 300);
+          }
+        }
+      }
+
+      btnStart.addEventListener("click", function () {
+        if (running) return;
+        aplicarTarget();
+        configurarModo();
+
+        const modo = modoSelect.value;
+        if (modo === "contagem-regressiva" && targetSeconds <= 0) {
+          statusText.textContent = "Defina minutos/segundos de alvo para usar contagem regressiva.";
+          return;
+        }
+
+        running = true;
+        label.textContent = "Em andamento";
+        statusText.textContent = "Cronômetro rodando. Use 'Volta' para marcar séries/blocos.";
+        btnStart.disabled = true;
+        btnPause.disabled = false;
+        btnReset.disabled = false;
+        btnLap.disabled = false;
+
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(tick, 1000);
+      });
+
+      btnPause.addEventListener("click", function () {
+        if (!running) return;
+        running = false;
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        label.textContent = "Pausado";
+        statusText.textContent = "Pausado. Retome com 'Iniciar' ou zere para reiniciar.";
+        btnStart.disabled = false;
+        btnPause.disabled = true;
+        btnLap.disabled = false;
+      });
+
+      btnReset.addEventListener("click", function () {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        running = false;
+        totalSeconds = 0;
+        lastLapSeconds = 0;
+        atualizarDisplay();
+        label.textContent = "Parado";
+        statusText.textContent = "Pronto para iniciar.";
+        btnStart.disabled = false;
+        btnPause.disabled = true;
+        btnReset.disabled = true;
+        btnLap.disabled = true;
+        lapsContainer.innerHTML = "";
+      });
+
+      btnLap.addEventListener("click", function () {
+        if (totalSeconds === 0 && !running) return;
+        const idx = lapsContainer.children.length + 1;
+        const lapTime = totalSeconds - lastLapSeconds;
+        lastLapSeconds = totalSeconds;
+
+        const item = document.createElement("div");
+        item.className = "lap-item";
+        item.innerHTML =
+          '<span class="index">Volta ' +
+          String(idx).padStart(2, "0") +
+          "</span><span class=\"time\">" +
+          formatTime(totalSeconds) +
+          " (" +
+          formatTime(lapTime) +
+          ")</span>";
+        lapsContainer.prepend(item);
+      });
+
+      // Inicial
+      aplicarTarget();
+      configurarModo();
+      atualizarDisplay();
+    })();
+  </script>
+</body>
+</html>
+
