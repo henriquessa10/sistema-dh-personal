@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DH PT - Sistema Final</title>
+    <style>
+        :root { --verde: #556b2f; --preto: #0a0a0a; --cinza: #1a1a1a; --texto: #f0f0f0; }
+        body { background: var(--preto); color: var(--texto); font-family: sans-serif; margin: 0; padding: 0; }
+        
+        .header { background: #111; padding: 25px 20px; border-bottom: 2px solid var(--verde); text-align: center; }
+        
+        /* Logo com DH acima do PT, mesmo tamanho e tipo */
+        .logo-dh-pt { 
+            width: 80px; height: 80px; border: 2px solid var(--verde); border-radius: 50%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            margin: 0 auto 10px; font-weight: bold; background: #000; font-size: 1.4rem; color: #fff;
+            line-height: 1; /* Garante que fiquem próximos sem espaço excessivo */
+        }
+        .logo-dh-pt span { color: var(--verde); }
+
+        .header h1 { margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .container { padding: 15px; max-width: 500px; margin: 0 auto; }
+        .tela { display: none; }
+        .ativa { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .aluno-card { background: var(--cinza); padding: 18px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .aluno-card:active { background: #222; }
+        
+        .btn-principal { background: var(--verde); color: white; padding: 16px; width: 100%; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; text-transform: uppercase; cursor: pointer; margin-top: 15px; }
+        .btn-voltar { background: transparent; color: #888; border: none; padding: 10px 0; font-size: 0.9rem; cursor: pointer; display: block; margin-bottom: 15px; text-align: left; }
+
+        .menu-grid { display: grid; gap: 10px; margin-top: 20px; }
+        
+        label { display: block; font-size: 0.85rem; margin: 15px 0 5px; color: var(--verde); font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 14px; background: #111; border: 1px solid #333; color: white; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
+        textarea { height: 80px; resize: none; }
+        
+        .tabs-treino { display: flex; gap: 5px; margin-bottom: 15px; background: #111; padding: 5px; border-radius: 8px; border: 1px solid #333; }
+        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: #888; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        .tab-ativa { background: var(--verde); color: white; }
+
+        .linha-treino { margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <script>
+        // O JAVASCRIPT NO TOPO GARANTE QUE AS FUNÇÕES CARREGUEM PRIMEIRO
+        let db = JSON.parse(localStorage.getItem('DH_PT_V7_FINAL')) || [];
+        let alunoIndex = null;
+        let treinoAtual = 'A';
+
+        function mudar(id) {
+            document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+            document.getElementById(id).classList.add('ativa');
+            if(id === 'T-LISTA') listarAlunos();
+            window.scrollTo(0,0);
+        }
+
+        function salvarNovo() {
+            let nome = document.getElementById('NOME').value;
+            if(!nome) return alert("Por favor, digite o nome do aluno.");
+            
+            db.push({ 
+                nome: nome, 
+                genero: document.getElementById('GENERO').value,
+                nascimento: document.getElementById('NASC').value,
+                peso: document.getElementById('PESO').value,
+                altura: document.getElementById('ALTURA').value,
+                nivel: document.getElementById('NIVEL').value,
+                tel: document.getElementById('TEL').value,
+                ana: {}, treinos: { A: [], B: [], C: [], D: [] }, freq: [] 
+            });
+            
+            localStorage.setItem('DH_PT_V7_FINAL', JSON.stringify(db));
+            mudar('T-LISTA');
+        }
+
+        function listarAlunos() {
+            let html = "";
+            db.forEach((a, i) => {
+                html += `<div class="aluno-card" onclick="abrirPerfil(${i})"><div><b>${a.nome}</b><br><small style="color:#888">${a.nivel} • ${a.genero}</small></div><div style="color:var(--verde); font-weight:bold;">➔</div></div>`;
+            });
+            document.getElementById('CORPO-LISTA').innerHTML = html || '<p style="text-align:center; color:#666; padding: 20px;">Nenhum aluno cadastrado.</p>';
+        }
+
+        function abrirPerfil(i) {
+            alunoIndex = i;
+            let a = db[i];
+            document.getElementById('TITULO-ALUNO').innerText = a.nome;
+            for(let n=1; n<=16; n++) document.getElementById('Q'+n).value = a.ana['q'+n] || "";
+            document.getElementById('QOBS').value = a.ana.obs || "";
+            mudarTab('A');
+            exibirFreq();
+            mudar('T-MENU');
+        }
+
+        function mudarTab(letra) {
+            treinoAtual = letra;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-ativa'));
+            document.getElementById('btn-tab-'+letra).classList.add('tab-ativa');
+            const listaTreino = db[alunoIndex].treinos[letra] || [];
+            document.getElementById('CORPO-TREINO').innerHTML = "";
+            if(listaTreino.length) {
+                listaTreino.forEach(t => addEx(t.e, t.s, t.r, t.k));
+            } else {
+                addEx(); // Adiciona uma linha vazia
+            }
+        }
+
+        function addEx(e="", s="", r="", k="") {
+            let d = document.createElement('div');
+            d.className = 'linha-treino';
+            d.innerHTML = `<input type="text" class="e" placeholder="Exercício" value="${e}"><div style="display:flex; gap:5px; margin-top:5px"><input style="width:33%" class="s" placeholder="S séries" value="${s}"><input style="width:33%" class="r" placeholder="R reps" value="${r}"><input style="width:33%" class="k" placeholder="Kg carga" value="${k}"></div>`;
+            document.getElementById('CORPO-TREINO').appendChild(d);
+        }
+
+        function gravarTudo(tipo) {
+            let a = db[alunoIndex];
+            if(tipo === 'ana') {
+                for(let n=1; n<=16; n++) a.ana['q'+n] = document.getElementById('Q'+n).value;
+                a.ana.obs = document.getElementById('QOBS').value;
+                alert("Anamnese salva!");
+            } else if(tipo === 'treino') {
+                a.treinos[treinoAtual] = Array.from(document.querySelectorAll('#CORPO-TREINO > .linha-treino')).map(d => ({
+                    e: d.querySelector('.e').value, s: d.querySelector('.s').value, r: d.querySelector('.r').value, k: d.querySelector('.k').value
+                }));
+                alert(`Treino ${treinoAtual} salvo!`);
+            }
+            localStorage.setItem('DH_PT_V7_FINAL', JSON.stringify(db));
+        }
+
+        function addF() {
+            let data = document.getElementById('F-DATA').value;
+            if(!data) return;
+            db[alunoIndex].freq.push(data);
+            localStorage.setItem('DH_PT_V7_FINAL', JSON.stringify(db));
+            exibirFreq();
+            document.getElementById('F-DATA').value = ""; // Limpa data
+        }
+
+        function exibirFreq() {
+            let lista = db[alunoIndex].freq.map(x => x.split('-').reverse().join('/')).reverse();
+            document.getElementById('CORPO-FREQ').innerHTML = lista.join('<br>') || '<span style="color:#555">Nenhuma aula registrada.</span>';
+        }
+    </script>
+
+    <div class="header">
+        <div class="logo-dh-pt">
+            DH
+            <span>PT</span>
+        </div>
+        <h1>Dionisio Henrique</h1>
+    </div>
+
+    <div class="container">
+        <div id="T-LISTA" class="tela ativa">
+            <h2 style="font-size: 1rem;">Meus Alunos</h2>
+            <div id="CORPO-LISTA"></div>
+            <button class="btn-principal" onclick="mudar('T-CADASTRO')">+ Novo Aluno</button>
+        </div>
+
+        <div id="T-CADASTRO" class="tela">
+            <button class="btn-voltar" onclick="mudar('T-LISTA')">← Voltar para Lista</button>
+            <h2 style="margin-top:0">Novo Cadastro</h2>
+            <label>Nome Completo</label><input type="text" id="NOME" placeholder="Ex: João Silva">
+            <div style="display:flex; gap:10px">
+                <div style="flex:1"><label>Nascimento</label><input type="date" id="NASC"></div>
+                <div style="flex:1">
+                    <label>Gênero</label>
+                    <select id="GENERO"><option>Masculino</option><option>Feminino</option><option>Outros</option></select>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px">
+                <div style="flex:1"><label>Peso (kg)</label><input type="number" id="PESO" placeholder="70"></div>
+                <div style="flex:1"><label>Altura (cm)</label><input type="number" id="ALTURA" placeholder="175"></div>
+            </div>
+            <label>Nível do Aluno</label>
+            <select id="NIVEL"><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select>
+            <label>WhatsApp (Opcional)</label><input type="tel" id="TEL" placeholder="(00) 00000-0000">
+            <button class="btn-principal" onclick="salvarNovo()">Cadastrar Aluno</button>
+        </div>
+
+        <div id="T-MENU" class="tela">
+            <button class="btn-voltar" onclick="mudar('T-LISTA')">← Sair do Perfil</button>
+            <h2 id="TITULO-ALUNO" style="color:var(--verde); margin-top:0;"></h2>
+            <div class="menu-grid">
+                <button class="btn-principal" onclick="mudar('T-TREINO')">🏋️ Treinos (A,B,C,D)</button>
+                <button class="btn-principal" onclick="mudar('T-ANA')">📋 Anamnese Completa</button>
+                <button class="btn-principal" onclick="mudar('T-FREQ')">📅 Controle de Frequência</button>
+            </div>
+        </div>
+
+        <div id="T-ANA" class="tela">
+            <button class="btn-voltar" onclick="mudar('T-MENU')">← Voltar</button>
+            <h2 style="margin-top:0">Anamnese</h2>
+            <label>Qual é o seu objetivo?</label><textarea id="Q1"></textarea>
+            <label>Pratica atividade física? Tempo?</label><textarea id="Q2"></textarea>
+            <label>Refeições/dia?</label><input type="text" id="Q3">
+            <label>Faz dieta?</label><textarea id="Q4"></textarea>
+            <label>Faz suplementação?</label><textarea id="Q5"></textarea>
+            <label>Dorme quantas horas?</label><input type="text" id="Q6">
+            <label>Fuma?</label><input type="text" id="Q7">
+            <label>Bebida alcoólica?</label><input type="text" id="Q8">
+            <label>Colesterol/Glicose alta?</label><input type="text" id="Q9">
+            <label>Alteração cardíaca?</label><input type="text" id="Q10">
+            <label>Tem diabetes?</label><input type="text" id="Q11">
+            <label>É hipertenso?</label><input type="text" id="Q12">
+            <label>Problemas pulmonares?</label><input type="text" id="Q13">
+            <label>Medicamento controlado?</label><textarea id="Q14"></textarea>
+            <label>Fez cirurgia?</label><textarea id="Q15"></textarea>
+            <label>Problema ortopédico?</label><textarea id="Q16"></textarea>
+            <label>Observações:</label><textarea id="QOBS"></textarea>
+            <button class="btn-principal" onclick="gravarTudo('ana')">Salvar Anamnese</button>
+        </div>
+
+        <div id="T-TREINO" class="tela">
+            <button class="btn-voltar" onclick="mudar('T-MENU')">← Voltar</button>
+            <h2 style="margin-top:0">Planilha de Treino</h2>
+            <div class="tabs-treino">
+                <button id="btn-tab-A" class="tab-btn" onclick="mudarTab('A')">A</button>
+                <button id="btn-tab-B" class="tab-btn" onclick="mudarTab('B')">B</button>
+                <button id="btn-tab-C" class="tab-btn" onclick="mudarTab('C')">C</button>
+                <button id="btn-tab-D" class="tab-btn" onclick="mudarTab('D')">D</button>
+            </div>
+            <div id="CORPO-TREINO"></div>
+            <button class="btn-principal" style="background:#222; border:1px dashed var(--verde); margin-bottom: 10px;" onclick="addEx()">+ Exercício</button>
+            <button class="btn-principal" onclick="gravarTudo('treino')">Salvar Treino Atual</button>
+        </div>
+
+        <div id="T-FREQ" class="tela">
+            <button class="btn-voltar" onclick="mudar('T-MENU')">← Voltar</button>
+            <h2 style="margin-top:0">Frequência</h2>
+            <label>Data da Aula</label>
+            <input type="date" id="F-DATA">
+            <button class="btn-principal" onclick="addF()">Registrar Presença</button>
+            <div id="CORPO-FREQ" style="margin-top:20px; background:#111; padding:15px; border-radius:10px; color:#888; text-align:center; border: 1px solid #333;"></div>
+        </div>
+    </div>
+
+    <script>
+        // INICIA A LISTA AO CARREGAR A PÁGINA
+        listarAlunos();
+    </script>
+</body>
+</html>
